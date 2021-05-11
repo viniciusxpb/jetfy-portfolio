@@ -1,13 +1,13 @@
-import { NgStyle } from '@angular/common';
 import { Component, ContentChild, Input, OnInit, TemplateRef } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
+import { EnumListType, IListfy_options } from '../jetfy-listfy/jetfy-listfy.component';
 
 @Component({
-  selector: 'jetfy-listfy',
-  templateUrl: './jetfy-listfy.component.html',
-  styleUrls: ['./jetfy-listfy.component.scss']
+  selector: 'jetfy-listfy2',
+  templateUrl: './jetfy-listfy2.component.html',
+  styleUrls: ['./jetfy-listfy2.component.scss']
 })
-export class JetfyListfyComponent implements OnInit {
+export class JetfyListfy2Component implements OnInit {
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
   @Input() cName: Object[];
@@ -91,20 +91,4 @@ export class JetfyListfyComponent implements OnInit {
     this.transform -= 100;
     this._internal_index++;
   }
-}
-
-export interface IListfy_options {
-  array: any[];
-  items_left_margin?:number;
-  items_right_margin?:number;
-  listType?:EnumListType;
-  aditional: string;
-  timed?:boolean;
-  interval?:number;
-}
-
-export enum EnumListType {
-  Arrow,
-  Floater,
-  Other,
 }

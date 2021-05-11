@@ -1,3 +1,23 @@
 <router-outlet>
-    
+    <jetfy-listfy [options]="listfy_options">
+        <ng-template let-item let-pState="state">
+            <jetfy-cardfy>
+                {{item.value}}
+            </jetfy-cardfy>
+        </ng-template>
+    </jetfy-listfy>
+    <jetfy-listfy2 [options]="listfy_options2">
+        <ng-template let-item let-pState="state">
+            <jetfy-cardfy>
+                {{item.value}}
+            </jetfy-cardfy>
+        </ng-template>
+    </jetfy-listfy2>
+    <jetfy-listfy2 [options]="listfy_options2">
+        <ng-template let-item let-pState="state">
+            <jetfy-cardfy>
+                {{item.value}}
+            </jetfy-cardfy>
+        </ng-template>
+    </jetfy-listfy2>
 </router-outlet>
