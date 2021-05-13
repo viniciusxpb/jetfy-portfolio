@@ -1,5 +1,5 @@
 import { NgStyle } from '@angular/common';
-import { Component, ContentChild, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, ContentChild, HostListener, Input, OnInit, TemplateRef } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
 
 @Component({
@@ -19,18 +19,42 @@ export class JetfyListfyComponent implements OnInit {
   _number_of_elements = 3;
   contador = 0;
   transform = -100;
+  list_transform = 0;
+  adjuster_transform=0;
+
+  adjuster_velocity=0;
   transformTime = '0.5s';
   _internal_index = 0;
   _listType: EnumListType;
   _timerSubscription: Subscription;
   _timerInterval = interval(2000);
+  _screen_inner_width;
+  _trippled_items;
+  _generatedId;
+
+  _component_width = 100;
+  _maximum_number_of_elements = 5;
+  _temp_write:boolean;
+  _reseting:boolean;
+  _remaining_right=0;
+  _non_repeater = true;
 
   nextElementSubscription: Subscription;
   nextElementInterval = interval(10);
 
+  _velocity = 0.5;
+  _list_velocity = 0;
+
   _options: IListfy_options;
   get options(): IListfy_options {
     return this._options;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    //this._screen_inner_width = event.target.innerWidth;
+    //this.rearrangeElements(this.numeroMaximoElementosTotal());
+    //this.rearrangeElements(this.numeroMaximoElementosTotal());
   }
 
   @Input() set options(value: IListfy_options) {
@@ -39,9 +63,8 @@ export class JetfyListfyComponent implements OnInit {
     this._items_left_margin = value.items_left_margin + "px";
     this._items_right_margin = value.items_right_margin + "px";
     this._listType = value.listType;
-    let removedElement = this._properties.pop();
-    this._properties.unshift(removedElement)
-    if(value.timed){
+    this._maximum_number_of_elements = value.maximum_number_of_elements;
+    if (value.timed) {
       this._timerSubscription = this._timerInterval.subscribe(val => {
         this.onClickedArrowRight();
       });
@@ -49,62 +72,167 @@ export class JetfyListfyComponent implements OnInit {
 
   }
 
-  constructor() { }
+  constructor() {
+    this._generatedId = Math.random().toString(36).substr(2, 9)
+    let observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (!mutation.addedNodes) return
+    
+        let procurando = 'property_box_list_'+this._generatedId;
+        let a = document.getElementById(procurando);
+        //let b = document.getElementById('property_box_0').clientWidth;
+        //this._component_width = b;
+        //let b = (document.querySelector('.property_box_list') as HTMLElement);
+        if(a!=null){
+          //console.log("existe !!!");
+          //console.log(b);
+          let value = (this._maximum_number_of_elements)*this._component_width;
+          document.getElementById(procurando).style.width = value+'px';
+          observer.disconnect()
+        }
+        else{
+          console.log("n existe");
+        }
+
+        for (let i = 0; i < mutation.addedNodes.length; i++) {
+          let node = mutation.addedNodes[i]
+        }
+      })
+    })
+    
+    observer.observe(document.body, {
+        childList: true
+      , subtree: true
+      , attributes: false
+      , characterData: false
+    })
+    
+
+    //observer.disconnect()
+  }
 
   ngOnInit(): void {
+    this._trippled_items = this._properties.slice(0,this._maximum_number_of_elements);
+    this._trippled_items.push(this.getNext());
+    this._trippled_items.unshift(this.getPrevious());
+  }
+
+  onPan(value) {
+    if (value.additionalEvent == "panright") {
+      this._velocity =0;
+      let transition = (10 * value.velocityX);
+      this.adjuster_velocity = 0;
+      this.changePosition(transition);
+    }
+    if (value.additionalEvent == "panleft") {
+      this._velocity =0;
+      let transition = (10 * value.velocityX);
+      this.adjuster_velocity = 0;
+      this.changePosition(transition);
+    }
+  }
+
+  getAdjusterStyle() {
+    return { 'transition': this.adjuster_velocity+'s', 'transform': 'translate(' + this.adjuster_transform + 'px, ' + 0 + 'px)'}
+  }
+
+  getListStyle() {
+    return { 'transition': this._list_velocity+'s', 'transform': 'translate(' + this.list_transform + 'px, ' + 0 + 'px)'}
   }
 
   getStyle(value1) {
-
-    let a = this._properties.length+this._internal_index
-    if (a <= value1) {
-
-      if (this._properties.length == -this._internal_index) {
-        this._internal_index = 0;
-        this.transform = -100;
-        return {'transform': 'translate(' + this.transform + 'px, ' + 0 + 'px)' }
-      }
-      console.log("me enquadro: "+value1)
-      let value = this.transform - (100 * this._properties.length)
-      return { 'transform': 'translate(' + value + 'px, ' + 0 + 'px)' }
-    }
-    if (this._internal_index > value1) {
-      if (this._properties.length == this._internal_index) {
-        this._internal_index = 0;
-        this.transform = -100;
-        return {'transform': 'translate(' + this.transform + 'px, ' + 0 + 'px)' }
-      }
-
-      let value = this.transform + (100 * this._properties.length)
-      return { 'transform': 'translate(' + value + 'px, ' + 0 + 'px)' }
-    }
-
-    return { 'transform': 'translate(' + this.transform + 'px, ' + 0 + 'px)' }
+    return { 'transition': this._velocity+'s', 'transform': 'translate(' + this.transform + 'px, ' + 0 + 'px)'}
   }
 
   onClickedArrowLeft() {
-    this.transform += 100;
-    this._internal_index--;
+    this.adjuster_velocity = 0.5;
+    this.changePosition(100);
   }
 
   onClickedArrowRight() {
-    this.transform -= 100;
-    this._internal_index++;
+    this.adjuster_velocity = 0.5;
+    this.changePosition(-100);
   }
+  changePosition(value) {
+    if(this._non_repeater){
+      this._non_repeater = false;
+      this._remaining_right+=value;
+      if(value>0){
+        //esquerda
+        //this._list_velocity = 0.5;
+        this.adjuster_transform += value;
+        if(this._remaining_right>=this._component_width){
+          this._trippled_items.unshift(this.getPrevious());
+          this._trippled_items.pop();
+          this.list_transform -= this._component_width;
+          this._remaining_right -=this._component_width;
+        }
+        //this.transform += value;
+      }else{
+        //direita
+        if(this._remaining_right<=-this._component_width){
+          this._trippled_items.push(this.getNext());
+          this.list_transform +=100;
+          this._trippled_items.shift();
+          this._remaining_right+=this._component_width;
+        }
+        this.transform += value;
+      }
+      this._non_repeater = true;
+    }
+  }
+
+  getNext(){
+    let ultimo_tripples = this._trippled_items.slice().pop();
+    let ultimo_properties = this._properties.slice().pop();
+    let indexUltimo = this._properties.indexOf(ultimo_tripples);
+    let proximo;
+    if(ultimo_tripples == ultimo_properties){
+      proximo = this._properties[0];
+    }else{
+      proximo = this._properties[indexUltimo+1];
+    }
+    return proximo; 
+  }
+
+  getPrevious(){
+    let primeiro_tripples = this._trippled_items[0];
+    let primeiro_properties = this._properties[0];
+    let indexPrimeiro = this._properties.indexOf(primeiro_tripples);
+    let previous;
+    if(primeiro_tripples == primeiro_properties){
+      previous = this._properties.slice().pop();
+    }else{
+      previous = this._properties[indexPrimeiro-1];
+    }
+    return previous; 
+  }
+
+  numeroMaximoElementosTotal(): number {
+    let toReturn: number = 0;
+    let actualElementWidth = this._screen_inner_width;
+    toReturn = Math.ceil(actualElementWidth / this._component_width);
+    if (toReturn > this._maximum_number_of_elements) {
+      toReturn = this._maximum_number_of_elements
+    }
+    return toReturn;
+  }
+
 }
 
 export interface IListfy_options {
   array: any[];
-  items_left_margin?:number;
-  items_right_margin?:number;
-  listType?:EnumListType;
-  aditional: string;
-  timed?:boolean;
-  interval?:number;
+  items_left_margin?: number;
+  items_right_margin?: number;
+  listType?: EnumListType;
+  timed?: boolean;
+  interval?: number;
+  maximum_number_of_elements?:number;
 }
 
 export enum EnumListType {
   Arrow,
   Floater,
+  Panner,
   Other,
 }

@@ -1,13 +1,11 @@
 .jetfy-listfy {
-    $color1: #4033FF;
-    $color2: white;
-    $color3: #FBFBFB;
     display: flex;
     justify-content: center;
 
+
     .main_body {
         display: flex;
-        background: #FBFBFB;
+        overflow: hidden;
 
         .property_box_arrow_left {
             cursor: pointer;
@@ -40,11 +38,6 @@
 
         .property_box_list{
             display: flex;
-            width: 300px;
-            .property_box {
-                transition: transform 0.5s;
-                margin-top: 40px;
-            }
         }
     }
 }

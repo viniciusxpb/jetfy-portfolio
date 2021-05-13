@@ -1,5 +1,5 @@
 <div class="jetfy-listfy">
-    <div class="main_body">
+    <div class="main_body" customTapGesture (cPan)="onPan($event)">
         <div (click)="onClickedArrowLeft()" class="property_box_arrow_left">
             <div class="property_box_arrow_left_item">
                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -9,14 +9,25 @@
                 </svg>
             </div>
         </div>
-        <div [id]="'property_box_list_'+cName" class="property_box_list">
+        <!-- <div  customTapGesture (cPan)="onPan($event)" [id]="'property_box_list_'+_generatedId" [ngStyle]="{'transform': 'translate(' + list_transform + 'px, ' + 0 + 'px)'}" class="property_box_list">
+            <div style="width: 100px; height: 100px; background-color: aqua;">t</div>
             <div class="property_box" [id]="'property_box_'+i"
             [style]="getStyle(i)"
             [ngClass]="{'property_box_list': true}"
-              *ngFor="let property of _properties; let i = index">
-                <ng-template [ngTemplateOutlet]="templateRef" [ngTemplateOutletContext]="{$implicit: property, state: i}"></ng-template>
+              *ngFor="let property of _trippled_items; let i = index">
+                
+            </div>
+            <div style="width: 100px; height: 100px; background-color: aqua;">t</div>
+        </div> -->
+        <div [style]="getAdjusterStyle()">
+            <div class="property_box_list" [id]="'property_box_list_'+_generatedId" [style]="getListStyle()">
+                <div class="property_box" *ngFor="let property of _trippled_items; let i = index" [style]="getStyle(i)">
+                    <ng-template [ngTemplateOutlet]="templateRef" [ngTemplateOutletContext]="{$implicit: property, state: i}"></ng-template>
+                </div>
             </div>
         </div>
+        
+
         <div (click)="onClickedArrowRight()" class="property_box_arrow_right">
             <div class="property_box_arrow_right_item">
                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
