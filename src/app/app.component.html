@@ -1,5 +1,5 @@
 <router-outlet>
-    1 elemento
+    máximo 1 elemento
     <jetfy-listfy [options]="listfy_options1">
         <ng-template let-item let-pState="state">
             <jetfy-cardfy>
@@ -7,7 +7,7 @@
             </jetfy-cardfy>
         </ng-template>
     </jetfy-listfy>
-    2 elementos
+    máximo 2 elementos
     <jetfy-listfy [options]="listfy_options2">
         <ng-template let-item let-pState="state">
             <jetfy-cardfy>
@@ -15,7 +15,7 @@
             </jetfy-cardfy>
         </ng-template>
     </jetfy-listfy>
-    3 elementos
+    máximo 3 elementos
     <jetfy-listfy [options]="listfy_options3">
         <ng-template let-item let-pState="state">
             <jetfy-cardfy>
@@ -23,20 +23,18 @@
             </jetfy-cardfy>
         </ng-template>
     </jetfy-listfy>
-    4 elementos
-    <jetfy-listfy [options]="listfy_options4">
+    máximo 5 elementos
+    <jetfy-listfy [options]="listfy_options5">
         <ng-template let-item let-pState="state">
             <jetfy-cardfy>
                 {{item.value}}
             </jetfy-cardfy>
         </ng-template>
     </jetfy-listfy>
-    5 elementos
-    <jetfy-listfy [options]="listfy_options5">
+    slider de imagens
+    <jetfy-listfy [options]="image_options">
         <ng-template let-item let-pState="state">
-            <jetfy-cardfy>
-                {{item.value}}
-            </jetfy-cardfy>
+            <img [src]="item.url" style="width: 800px;">
         </ng-template>
     </jetfy-listfy>
 </router-outlet>

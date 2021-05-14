@@ -47,6 +47,20 @@ export class AppComponent {
     {value: 'Pessoa5', viewValue: 'Steve'},
   ];
 
+  image_list = [
+    {url: "../assets/images/img_lights_wide.jpg"},
+    {url: "../assets/images/img_mountains_wide.jpg"},
+    {url: "../assets/images/img_nature_wide.jpg"},
+    {url: "../assets/images/img_snow_wide.jpg"},
+  ];
+
+  image_options:IListfy_options = 
+  {array:this.image_list,
+    listType:EnumListType.Panner,
+    timed:false,
+    maximum_number_of_elements:1,
+  }
+
   listfy_options1:IListfy_options = 
   {array:this.elements,
     listType:EnumListType.Panner,

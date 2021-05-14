@@ -2,14 +2,14 @@ import { Directive, ElementRef, EventEmitter, Input, NgZone, OnDestroy, OnInit, 
 import * as Hammer from 'hammerjs';
 
 interface HammerManager {
-  new (element: HTMLElement | SVGElement, options?: any): HammerManager;
+  new(element: HTMLElement | SVGElement, options?: any): HammerManager;
   destroy(): void;
   add(recognizer: Recognizer): void;
   on(eventName: string, callback: Function): void;
 }
 
 interface Recognizer {
-  new (options?: any): Recognizer;
+  new(options?: any): Recognizer;
   recognizeWith(otherRecognizer: Recognizer | string): Recognizer;
 }
 
@@ -17,7 +17,7 @@ interface Recognizer {
   selector: '[customTapGesture]',
 })
 export class customTapGesture implements OnInit, OnDestroy {
-  constructor(private elementRef: ElementRef, private zone: NgZone) {}
+  constructor(private elementRef: ElementRef, private zone: NgZone) { }
 
   /**
    * Return the hammerjs library if it's available
@@ -60,15 +60,12 @@ export class customTapGesture implements OnInit, OnDestroy {
         touchAction: 'panleft',
       });
 
-      // mc.add(new this.hammerLib.Tap({}));
-      // mc.add(new this.hammerLib.Pan({}));
-
       manager.add(new this.hammerLib.Tap({}));
       manager.add(new this.hammerLib.Pan({}));
-      
-     manager.on('swipeleft swiperight panleft panright tap press', (ev: any) => {
-         this.cTap.emit(ev);
-         ev.preventDefault();
+
+      manager.on('swipeleft swiperight panleft panright tap press', (ev: any) => {
+        this.cTap.emit(ev);
+        ev.preventDefault();
       });
 
       manager.on('panleft panright', (ev: any) => {

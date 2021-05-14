@@ -69,7 +69,6 @@ export class JetfyListfyComponent implements OnInit {
         this.onClickedArrowRight();
       });
     }
-
   }
 
   constructor() {
@@ -80,8 +79,9 @@ export class JetfyListfyComponent implements OnInit {
     
         let procurando = 'property_box_list_'+this._generatedId;
         let a = document.getElementById(procurando);
-        //let b = document.getElementById('property_box_0').clientWidth;
-        //this._component_width = b;
+        let b = document.getElementById('property_box_0_'+this._generatedId).clientWidth;
+        this._component_width = b;
+        this.transform = -b;
         //let b = (document.querySelector('.property_box_list') as HTMLElement);
         if(a!=null){
           //console.log("existe !!!");
@@ -117,6 +117,10 @@ export class JetfyListfyComponent implements OnInit {
     this._trippled_items.unshift(this.getPrevious());
   }
 
+  onMouseDown(event){
+    event.preventDefault();
+  }
+
   onPan(value) {
     if (value.additionalEvent == "panright") {
       this._velocity =0;
@@ -146,12 +150,12 @@ export class JetfyListfyComponent implements OnInit {
 
   onClickedArrowLeft() {
     this.adjuster_velocity = 0.5;
-    this.changePosition(100);
+    this.changePosition(this._component_width);
   }
 
   onClickedArrowRight() {
     this.adjuster_velocity = 0.5;
-    this.changePosition(-100);
+    this.changePosition(-this._component_width);
   }
   changePosition(value) {
     if(this._non_repeater){
@@ -172,7 +176,7 @@ export class JetfyListfyComponent implements OnInit {
         //direita
         if(this._remaining_right<=-this._component_width){
           this._trippled_items.push(this.getNext());
-          this.list_transform +=100;
+          this.list_transform +=this._component_width;
           this._trippled_items.shift();
           this._remaining_right+=this._component_width;
         }
